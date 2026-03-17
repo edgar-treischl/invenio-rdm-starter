@@ -92,6 +92,7 @@ services:
 
     volumes:
       - uploaded_data:/opt/invenio/var/instance/data
+      - /Users/edgar/Develop/invenio-rdm-starter/demo_data:/tmp/demo_data:ro
       - archived_data:/opt/invenio/var/instance/archive
     environment:
       <<: *common-env
@@ -176,6 +177,8 @@ services:
 
     volumes:
       - uploaded_data:/opt/invenio/var/instance/data
+      - /Users/edgar/Develop/invenio-rdm-starter/demo_data:/tmp/demo_data:ro
+      - "./add_demo_datasets.py:/tmp/add_demo_datasets.py:ro"
     environment:
       <<: *common-env
 
@@ -212,6 +215,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-inveniordm}
     ports:
       - "127.0.0.1:5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U inveniordm" ]
       interval: 5s
@@ -222,6 +227,7 @@ services:
     restart: "unless-stopped"
     volumes:
       - ./log4j2.properties:/usr/share/opensearch/config/log4j2.properties:ro
+      - os_data:/usr/share/opensearch/data
     environment:
       bootstrap.memory_lock: "true"
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
@@ -246,6 +252,8 @@ services:
       retries: 10
 volumes:
   app_data:
+  os_data:
+  db_data:
   uploaded_data:
   archived_data:
   caddy_data:
